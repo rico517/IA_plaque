@@ -1,19 +1,12 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>OCR - Extraction de texte</title>
-</head>
-<body>
-    <h1>📤 Uploader une image pour analyse OCR</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Analyser</button>
-    </form>
 
-    {% if texte %}
-        <h2>📝 Texte détecté :</h2>
-        <pre>{{ texte }}</pre>
-    {% endif %}
+<!DOCTYPE html>
+<html>
+<head><title>Analyseur OCR</title></head>
+<body>
+  <h1>Uploader une image</h1>
+  <form method="post" enctype="multipart/form-data">
+    <input type="file" name="image">
+    <input type="submit" value="Analyser">
+  </form>
 </body>
 </html>

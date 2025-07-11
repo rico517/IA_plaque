@@ -1,69 +1,49 @@
+
+from flask import Flask, render_template, request, redirect, url_for
 import os
-import sqlite3
-from flask import Flask, request, redirect, url_for, render_template
-from datetime import datetime
+from werkzeug.utils import secure_filename
 import cv2
 import pytesseract
-
-# Config
-UPLOAD_FOLDER = 'uploads'
-DB_PATH = 'ocr_data.db'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+import joblib
+import numpy as np
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+model = joblib.load('ml/text_detector_model.pkl')
 
-# Init dossier
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+def extract_features(image_path):
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    img = cv2.resize(img, (100, 100))
+    _, thresh = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    white_pixel_ratio = np.sum(thresh == 255) / (100 * 100)
+    return [white_pixel_ratio]
 
-# Init DB
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS ocr_resultats (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nom_image TEXT,
-            texte_extrait TEXT,
-            date_extraction TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-# OCR + Enregistrement
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def extraire_texte(image_path):
-    image = cv2.imread(image_path)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
-    texte = pytesseract.image_to_string(thresh, lang='fra')  # ou 'eng'
-    return texte.strip()
-
-def enregistrer_texte(nom_image, texte):
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        INSERT INTO ocr_resultats (nom_image, texte_extrait, date_extraction)
-        VALUES (?, ?, ?)
-    ''', (nom_image, texte, datetime.now().isoformat()))
-    conn.commit()
-    conn.close()
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def index():
-    texte = None
-    if request.method == 'POST':
-        fichier = request.files.get('image')
-        if fichier and allowed_file(fichier.filename):
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], fichier.filename)
-            fichier.save(filepath)
-            texte = extraire_texte(filepath)
-            enregistrer_texte(fichier.filename, texte)
-    return render_template('index.html', texte=texte)
+    if request.method == "POST":
+        if "image" not in request.files:
+            return redirect(request.url)
+        file = request.files["image"]
+        if file.filename == "":
+            return redirect(request.url)
+        if file:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            file.save(filepath)
 
-if __name__ == '__main__':
-    init_db()
+            # Prediction: y a-t-il du texte ?
+            features = extract_features(filepath)
+            pred = model.predict([features])[0]
+
+            if pred == 0:
+                extracted_text = "[Aucun texte détecté]"
+            else:
+                img = cv2.imread(filepath)
+                extracted_text = pytesseract.image_to_string(img)
+
+            return render_template("result.html", text=extracted_text)
+    return render_template("index.html")
+
+if __name__ == "__main__":
     app.run(debug=True)

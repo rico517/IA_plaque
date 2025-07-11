@@ -1,38 +1,46 @@
-# OCR WebApp
 
-Une application web simple en Python/Flask pour :
+# IA_Plaque - OCR et Détection de Texte avec Flask + ML
 
-- Uploader une image via une interface web
-- Extraire le texte de l’image via OCR (Tesseract)
-- Enregistrer les résultats dans une base de données SQLite
+Ce projet est une application web Flask permettant :
+- D'uploader une image via une interface web.
+- De détecter automatiquement si l'image contient du texte (grâce à un modèle ML simple).
+- D'appliquer de l'OCR (reconnaissance de texte) si le modèle détecte du texte.
+- D'afficher le texte extrait dans une page web.
 
-## 🚀 Démarrage
+## 🧠 Modèle d'apprentissage
+- **Type** : Forêt Aléatoire (`RandomForestClassifier`)
+- **Objectif** : Classifier une image comme "texte" ou "pas de texte"
+- **Caractéristique utilisée** : Ratio de pixels blancs après seuillage sur une image redimensionnée en 100x100
+- **Format d'entrée attendu** : 
+  ```
+  ml/training_data/
+    ├── text/       # images contenant du texte
+    └── no_text/    # images sans texte
+  ```
 
-### 1. Installer les dépendances
+## 🔍 OCR
+- Utilise [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) via `pytesseract` pour extraire le texte uniquement si l'image est prédite comme contenant du texte.
 
+## 💻 Interface Web
+- Développée avec Flask.
+- Interface simple pour charger une image et afficher le résultat.
+
+## 🚀 Lancement
+
+### 1. Entraîner le modèle
 ```bash
-pip install -r requirements.txt
+python ml/train_model.py
 ```
 
-### 2. Installer Tesseract OCR
-
-#### Ubuntu/Debian :
-```bash
-sudo apt install tesseract-ocr
-```
-
-#### macOS :
-```bash
-brew install tesseract
-```
-
-#### Windows :
-Télécharger depuis : https://github.com/tesseract-ocr/tesseract
-
-### 3. Lancer l'application
-
+### 2. Lancer l'application Flask
 ```bash
 python app.py
 ```
 
-Ouvre ensuite [http://localhost:5000](http://localhost:5000) dans ton navigateur.
+Puis ouvrir [http://127.0.0.1:5000](http://127.0.0.1:5000) dans le navigateur.
+
+---
+
+## 📦 Dépendances
+
+Voir `requirements.txt`
