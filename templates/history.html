@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Historique des Uploads</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .text-yes { color: green; font-weight: bold; }
+    .text-no { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Historique des images uploadées</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Fichier</th>
+        <th>Texte détecté</th>
+        <th>Texte OCR</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for upload in uploads %}
+      <tr>
+        <td>{{ upload[3][:19].replace("T", " ") }}</td>
+        <td>{{ upload[1] }}</td>
+        <td>
+          {% if upload[4] %}
+            <span class="text-yes">Oui</span>
+          {% else %}
+            <span class="text-no">Non</span>
+          {% endif %}
+        </td>
+        <td><pre>{{ upload[5] }}</pre></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><a href="/">← Retour à l'accueil</a></p>
+</body>
+</html>
