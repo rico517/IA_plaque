@@ -16,7 +16,7 @@ import numpy as np
 
 project_root = Path(".")
 text_dir = project_root / "text"
-no_text_dir = project_root / "no_text"
+no_text_dir = project_root / "pas_text"
 
 for i in range(4):
     img = Image.new("RGB", (200, 100), color=(255, 255, 255))

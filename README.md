@@ -15,7 +15,7 @@ Ce projet est une application web Flask permettant :
   ```
   ml/training_data/
     ├── text/       # images contenant du texte
-    └── no_text/    # images sans texte
+    └── pas_text/    # images sans texte
   ```
 
 ## 🔍 OCR
