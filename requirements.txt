@@ -5,3 +5,4 @@ opencv-python
 scikit-learn
 numpy
 joblib
+sqlite3

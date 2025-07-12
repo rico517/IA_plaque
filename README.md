@@ -6,6 +6,7 @@ Ce projet est une application web Flask permettant :
 - De détecter automatiquement si l'image contient du texte (grâce à un modèle ML simple).
 - D'appliquer de l'OCR (reconnaissance de texte) si le modèle détecte du texte.
 - D'afficher le texte extrait dans une page web.
+- Historiser les differents uploads dans une base de donnees SQLite
 
 ## 🧠 Modèle d'apprentissage
 - **Type** : Forêt Aléatoire (`RandomForestClassifier`)
