@@ -1,3 +1,19 @@
+"""
+Ce module fournit des fonctionnalités pour entraîner un classificateur d'images simple afin de détecter la présence de texte dans les images à l'aide d'un modèle Random Forest.
+
+Fonctions :
+    extract_features(image_path):
+        Extrait des caractéristiques d'un fichier image donné. La caractéristique est le ratio de pixels blancs dans une image en niveaux de gris seuillée et redimensionnée à 100x100 pixels.
+
+    build_dataset(data_dir):
+        Construit un ensemble de données de caractéristiques et d'étiquettes à partir d'une structure de répertoires contenant les sous-répertoires 'text' et 'no_text' avec des fichiers image.
+
+    train_and_save_model(data_dir, model_path):
+        Entraîne un classificateur Random Forest sur l'ensemble de données construit à partir du répertoire spécifié, affiche un rapport de classification et sauvegarde le modèle entraîné sur le disque.
+
+Utilisation :
+    Exécutez le module directement pour entraîner le modèle en utilisant les images dans 'ml/data' et le sauvegarder sous 'ml/text_detector_model.pkl'.
+"""
 
 import os
 import cv2
@@ -38,4 +54,4 @@ def train_and_save_model(data_dir, model_path):
     joblib.dump(clf, model_path)
 
 if __name__ == "__main__":
-    train_and_save_model("ml/training_data", "ml/text_detector_model.pkl")
+    train_and_save_model("ml/data", "ml/text_detector_model.pkl")

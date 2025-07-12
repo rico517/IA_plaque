@@ -1,3 +1,22 @@
+"""
+Application web Flask pour détecter et extraire le texte des images téléchargées.
+
+Routes :
+    - "/" (GET, POST) : Page principale pour télécharger des images. En POST, sauvegarde l'image,
+      extrait des caractéristiques, prédit si du texte est présent avec un modèle de machine learning,
+      et extrait le texte avec pytesseract si du texte est détecté. Affiche les résultats.
+
+Fonctions :
+    - extract_features(image_path) : Charge une image, la redimensionne, applique un seuillage binaire,
+      et calcule le ratio de pixels blancs comme caractéristique pour la détection de texte.
+
+Configuration :
+    - UPLOAD_FOLDER : Dossier pour stocker les images téléchargées.
+    - model : Modèle scikit-learn pré-entraîné pour la détection de texte chargé depuis 'ml/text_detector_model.pkl'.
+
+Dépendances :
+    - Flask, werkzeug, cv2 (OpenCV), pytesseract, joblib, numpy
+"""
 
 from flask import Flask, render_template, request, redirect, url_for
 import os
